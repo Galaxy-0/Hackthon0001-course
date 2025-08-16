@@ -4,26 +4,89 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Hackathon project repository (Hackthon0001-course) that is currently in its initial setup phase.
+DevOps入门教学项目 - 一个极简的TODO API，用于学习DevOps核心概念。
+技术栈：Python Flask + Docker + GitHub Actions
 
-## Development Setup
+## Common Commands
 
-As the project is newly initialized, no specific build or development commands are configured yet. When implementing features:
+### Development
+```bash
+# Install dependencies with uv
+uv sync
 
-1. Check for any newly added configuration files (package.json, requirements.txt, etc.) to determine the appropriate development commands
-2. Look for build scripts or makefiles that may be added later
-3. Identify the primary programming language and framework as they are introduced
+# Run application locally
+uv run python app.py
 
-## Repository Status
+# Run tests
+uv run pytest test_app.py -v
 
-- Git repository initialized with main branch
-- No code structure or dependencies established yet
-- Ready for initial project setup and implementation
+# Run specific test
+uv run pytest test_app.py::test_health_check -v
+```
 
-## Notes for Future Development
+### Docker
+```bash
+# Build Docker image
+docker build -t todo-app .
 
-When the project structure is established, update this file with:
-- Specific build, test, and lint commands
-- Architecture overview once code is added
-- Key directories and their purposes
-- Development workflow specifics
+# Run container
+docker run -p 8000:5000 todo-app
+
+# Run container in background
+docker run -d -p 8000:5000 --name todo-app todo-app
+
+# Stop container
+docker stop todo-app
+
+# View logs
+docker logs todo-app
+```
+
+### API Testing
+```bash
+# Health check
+curl http://localhost:8000/health
+
+# Get todos
+curl http://localhost:8000/todos
+
+# Add todo
+curl -X POST http://localhost:8000/todos \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Learn DevOps"}'
+```
+
+## Project Structure
+
+- `app.py` - Flask application with TODO API endpoints
+- `test_app.py` - pytest test suite
+- `requirements.txt` - Production dependencies (Flask, gunicorn)
+- `requirements-dev.txt` - Development dependencies (includes pytest)
+- `Dockerfile` - Container configuration for production
+- `.github/workflows/ci.yml` - GitHub Actions CI pipeline
+
+## Key Features
+
+1. **REST API Endpoints**:
+   - `GET /` - API information
+   - `GET /health` - Health check for monitoring
+   - `GET /todos` - Retrieve all todos
+   - `POST /todos` - Create new todo
+
+2. **Testing**: Full test coverage with pytest
+3. **Containerization**: Docker support with gunicorn
+4. **CI/CD**: Automated testing and building via GitHub Actions
+
+## Development Workflow
+
+1. Make changes to code
+2. Run tests locally: `pytest test_app.py -v`
+3. Build and test Docker image locally
+4. Commit and push changes
+5. GitHub Actions will automatically run tests and build
+
+## Important Notes
+
+- The app uses in-memory storage (todos list) - data is lost on restart
+- This is intentional for learning purposes - keeps things simple
+- Production deployment would require persistent storage (database)

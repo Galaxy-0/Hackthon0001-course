@@ -1,0 +1,50 @@
+name: CI Pipeline
+
+# 什么时候运行：推送代码或创建PR时
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # 1. 检出代码
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    # 2. 设置Python环境
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    # 3. 安装 uv
+    - name: Install uv
+      uses: astral-sh/setup-uv@v3
+    
+    # 4. 安装依赖
+    - name: Install dependencies
+      run: |
+        uv sync
+    
+    # 5. 运行测试
+    - name: Run tests
+      run: |
+        uv run pytest test_app.py -v
+    
+    # 6. 构建Docker镜像
+    - name: Build Docker image
+      run: |
+        docker build -t todo-app:${{ github.sha }} .
+    
+    # 7. 测试Docker镜像是否能运行
+    - name: Test Docker image
+      run: |
+        docker run -d -p 8000:5000 --name test-app todo-app:${{ github.sha }}
+        sleep 5
+        curl -f http://localhost:8000/health || exit 1
+        docker stop test-app
