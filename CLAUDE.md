@@ -58,12 +58,13 @@ curl -X POST http://localhost:8000/todos \
 
 ## Project Structure
 
-- `app.py` - Flask application with TODO API endpoints
-- `test_app.py` - pytest test suite
+- `app.py` - Flask application with TODO API endpoints (100 lines)
+- `test_app.py` - pytest test suite with 6 test cases
+- `pyproject.toml` - Project configuration with uv dependency management
 - `requirements.txt` - Production dependencies (Flask, gunicorn)
 - `requirements-dev.txt` - Development dependencies (includes pytest)
 - `Dockerfile` - Container configuration for production
-- `.github/workflows/ci.yml` - GitHub Actions CI pipeline
+- `.github/workflows/ci.yml` - GitHub Actions CI pipeline with Docker testing
 
 ## Key Features
 
@@ -80,10 +81,19 @@ curl -X POST http://localhost:8000/todos \
 ## Development Workflow
 
 1. Make changes to code
-2. Run tests locally: `pytest test_app.py -v`
+2. Run tests locally: `uv run pytest test_app.py -v`
 3. Build and test Docker image locally
 4. Commit and push changes
-5. GitHub Actions will automatically run tests and build
+5. GitHub Actions will automatically run tests and build Docker image
+6. CI pipeline tests Docker container health endpoint
+
+## Architecture Notes
+
+- **In-memory storage**: Uses Python list for todos (intentionally simple for learning)
+- **Single-file Flask app**: All endpoints in `app.py` with error handling
+- **Test coverage**: 6 test cases covering all endpoints and error scenarios
+- **Container ready**: Runs with gunicorn in production mode via Docker
+- **CI/CD validation**: GitHub Actions tests both Python and Docker environments
 
 ## Important Notes
 
